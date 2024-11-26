@@ -43,4 +43,7 @@ class Board:
         return neighbors
 
 
-    
+    def positions(self):
+        for x in range(self.size.x):
+            for y in range(self.size.y):
+                yield Vector2(x, y)
