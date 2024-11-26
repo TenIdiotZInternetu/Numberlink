@@ -23,3 +23,24 @@ class Board:
     def __init__(self, size, numbers):
         self.size = size
         self.numbers = numbers
+
+    def neighbors(self, pos):
+        neighbors = []
+
+        # Assure that pos is in bounds of the board
+        assert pos.x >= 0 and pos.y >= 0 and pos.x < self.size.x and pos.y < self.size.y
+
+        # Don't return neighbors outside of the board
+        if pos.x > 0:
+            neighbors.append(pos + Vector2.left())
+        if pos.x < self.size.x - 1:
+            neighbors.append(pos + Vector2.right())
+        if pos.y > 0:
+            neighbors.append(pos + Vector2.down())
+        if pos.y < self.size.y - 1:
+            neighbors.append(pos + Vector2.up())
+
+        return neighbors
+
+
+    
