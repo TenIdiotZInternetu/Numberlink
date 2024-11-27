@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from itertools import combinations
 
 class Vector2:
     def __init__(self, x, y):
@@ -79,7 +80,7 @@ class Board:
         return Board(board_size, numbers)
 
 
-def encode_Npi(position: Vector2, number: int, positive=True):
+def encode_Npi(position: Vector2, number: int, positive=True) -> str:
     vals = [str(position.x), str(position.y), str(number)]
 
     # Make sure that the code number never starts with 0
@@ -107,20 +108,38 @@ def encode_cnf(board: Board) -> set[set[str]]:
                 
     for pos in board.numbered_tiles():
         for i in range(number_count):
-            clauses.add(encode_oneSameNeighbor(pos, i))
+            clauses.add(encode_oneSameNeighbor(board, pos, i))
 
     for pos in empty_tiles:
         for i in range(number_count):
-            clauses.add(encode_twoSameNeighbors(pos, i))
+            clauses.add(encode_twoSameNeighbors(board, pos, i))
 
     return clauses
 
 
-def encode_onlyOneNum(pos, i, j):
+def encode_onlyOneNum(pos: Vector2, i: int, j: int):
     return set(
         encode_Npi(pos, i, False),
         encode_Npi(pos, j, False)
     )
+
+
+def encode_oneSameNeighbor(board: Board, pos: int, num: int) -> set(str):
+    clause = set()
+    neighbors = board.neighbors(pos)
+    n = len(neighbors)
+
+    for k in range(n):
+        if k == 3: continue
+
+        for i_comb in combinations(range(n), k):
+            for i, nebr in enumerate(neighbors):
+                if i in i_comb:
+                    clause.add(encode_Npi(nebr, num, True))
+                else:
+                    clause.add(encode_Npi(nebr, num, False))
+
+    return clause
 
 
 def main(args):
