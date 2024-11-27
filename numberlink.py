@@ -1,3 +1,5 @@
+from argparse import ArgumentParser
+
 class Vector2:
     def __init__(self, x, y):
         self.x = x
@@ -15,8 +17,14 @@ class Vector2:
     def right():
         return Vector2(1, 0)
     
+    def zero():
+        return Vector2(0, 0)
+    
     def __add__(self, other):
         return Vector2(self.x + other.x, self.y + other.y)
+    
+    def __repr__(self):
+        return "<{}, {}>".format(self.x, self.y)
 
 
 class Board:
@@ -47,3 +55,29 @@ class Board:
         for x in range(self.size.x):
             for y in range(self.size.y):
                 yield Vector2(x, y)
+
+    
+    def from_input(filename):
+        with open(filename) as file:
+            board_size = Vector2.zero()
+            numbers = []
+
+            board_size.x, board_size.y = next(file).split()
+
+            for line in file:
+                posx, posy, number = line.split()
+                numbers.append((Vector2(posx, posy), int(number)))
+
+        return Board(board_size, numbers)
+
+
+def main(args):
+    board = Board.from_input(args.input)
+    pass
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("-i", "--input", default="input.in", type=str, help="The instance file.")
+
+    main(parser.parse_args())
