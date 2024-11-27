@@ -107,13 +107,20 @@ def encode_cnf(board: Board) -> set[set[str]]:
                 
     for pos in board.numbered_tiles():
         for i in range(number_count):
-            clauses.add(encode_oneSameNeighbour(pos, i))
+            clauses.add(encode_oneSameNeighbor(pos, i))
 
     for pos in empty_tiles:
         for i in range(number_count):
-            clauses.add(encode_twoSameNeihbors(pos, i))
+            clauses.add(encode_twoSameNeighbors(pos, i))
 
     return clauses
+
+
+def encode_onlyOneNum(pos, i, j):
+    return set(
+        encode_Npi(pos, i, False),
+        encode_Npi(pos, j, False)
+    )
 
 
 def main(args):
