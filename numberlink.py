@@ -94,7 +94,7 @@ def encode_Npi(position: Vector2, number: int, positive=True) -> str:
     return code
 
 
-def encode_cnf(board: Board) -> set[set[str]]:
+def encode_cnf(board: Board) -> frozenset[set[str]]:
     number_count = board.highest_number()
     clauses = set()
 
@@ -103,6 +103,7 @@ def encode_cnf(board: Board) -> set[set[str]]:
     for pos in board.tiles():
         for i in range(number_count):
             for j in range(number_count):
+                if i == j: continue
                 clauses.add(encode_onlyOneNum(pos, i, j))
                 
     for pos in board.numbered_tiles():
@@ -113,17 +114,18 @@ def encode_cnf(board: Board) -> set[set[str]]:
         for i in range(number_count):
             clauses.add(encode_neighborCount(board, 2, pos, i))
 
-    return clauses
+    return frozenset(clauses)
 
 
-def encode_onlyOneNum(pos: Vector2, i: int, j: int):
-    return set(
-        encode_Npi(pos, i, False),
-        encode_Npi(pos, j, False)
-    )
+def encode_onlyOneNum(pos: Vector2, i: int, j: int) -> frozenset[str]:
+    clause = set()
+    clause.add(encode_Npi(pos, i, False))
+    clause.add(encode_Npi(pos, j, False))
+
+    return frozenset(clause)
 
 
-def encode_neighborCount(board: Board, count: int, pos: int, num: int):
+def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozenset[str]:
     assert 0 <= count <= 4
 
     clause = set()
@@ -137,7 +139,7 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int):
             for i, nebr in enumerate(neighbors):
                 clause.add(encode_Npi(nebr, num, i not in i_comb))
 
-    return clause
+    return frozenset(clause)
 
 
 def main(args):
