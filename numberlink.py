@@ -132,7 +132,7 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
     neighbors = board.neighbors(pos)
     n = len(neighbors)
 
-    for k in range(n):
+    for k in range(n + 1):
         if k == count: continue
 
         for i_comb in combinations(range(n), k):
@@ -149,7 +149,6 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
 def main(args):
     board = Board.from_input(args.input)
     cnf = encode_cnf(board)
-    print(cnf)
 
 
 if __name__ == "__main__":
