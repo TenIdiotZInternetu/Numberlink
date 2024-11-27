@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from itertools import combinations
 
 class Vector2:
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int):
         self.x = x
         self.y = y
 
@@ -68,14 +68,13 @@ class Board:
     
     def from_input(filename: str):
         with open(filename) as file:
-            board_size = Vector2.zero()
+            sizex, sizey = next(file).split()
+            board_size = Vector2(int(sizex), int(sizey))
+
             numbers = {}
-
-            board_size.x, board_size.y = next(file).split()
-
             for line in file:
                 posx, posy, number = line.split()
-                numbers[Vector2(posx, posy)] = int(number)
+                numbers[Vector2(int(posx), int(posy))] = int(number)
 
         return Board(board_size, numbers)
 
@@ -124,7 +123,7 @@ def encode_onlyOneNum(pos: Vector2, i: int, j: int):
     )
 
 
-def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> set(str):
+def encode_neighborCount(board: Board, count: int, pos: int, num: int):
     assert 0 <= count <= 4
 
     clause = set()
@@ -143,11 +142,8 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> set(st
 
 def main(args):
     board = Board.from_input(args.input)
-
-    for pos, num in board.numbers.items():
-        print(encode_Npi(pos, num))
-
-    pass
+    cnf = encode_cnf(board)
+    print(cnf)
 
 
 if __name__ == "__main__":
