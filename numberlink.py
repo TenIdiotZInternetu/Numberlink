@@ -37,7 +37,7 @@ class Board:
         neighbors = []
 
         # Assure that pos is in bounds of the board
-        assert pos.x >= 0 and pos.y >= 0 and pos.x < self.size.x and pos.y < self.size.y
+        assert 0 <= pos.x < self.size.x and 0 <= pos.y < self.size.y
 
         # Don't return neighbors outside of the board
         if pos.x > 0:
