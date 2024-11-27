@@ -108,11 +108,11 @@ def encode_cnf(board: Board) -> frozenset[set[str]]:
                 
     for pos in board.numbered_tiles():
         for i in range(number_count):
-            clauses.add(encode_neighborCount(board, 1, pos, i))
+            clauses |= encode_neighborCount(board, 1, pos, i)
 
     for pos in empty_tiles:
         for i in range(number_count):
-            clauses.add(encode_neighborCount(board, 2, pos, i))
+            clauses |= encode_neighborCount(board, 2, pos, i)
 
     return frozenset(clauses)
 
@@ -128,7 +128,7 @@ def encode_onlyOneNum(pos: Vector2, i: int, j: int) -> frozenset[str]:
 def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozenset[str]:
     assert 0 <= count <= 4
 
-    clause = set()
+    clauses = set()
     neighbors = board.neighbors(pos)
     n = len(neighbors)
 
@@ -136,10 +136,14 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
         if k == count: continue
 
         for i_comb in combinations(range(n), k):
+            clause = set()
+
             for i, nebr in enumerate(neighbors):
                 clause.add(encode_Npi(nebr, num, i not in i_comb))
 
-    return frozenset(clause)
+            clauses.add(frozenset(clause))
+
+    return frozenset(clauses)
 
 
 def main(args):
