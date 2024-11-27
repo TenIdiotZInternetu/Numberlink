@@ -71,8 +71,27 @@ class Board:
         return Board(board_size, numbers)
 
 
+def encode_Npi(position, number, positive=True):
+    vals = [str(position.x), str(position.y), str(number)]
+
+    # Make sure that the code number never starts with 0
+    code = "1"
+
+    for val in vals:
+        code += str(val).rjust(3, "0")
+
+    if not positive:
+        code = "-" + code
+
+    return code
+
+
 def main(args):
     board = Board.from_input(args.input)
+
+    for pos, num in board.numbers:
+        print(encode_Npi(pos, num))
+
     pass
 
 
