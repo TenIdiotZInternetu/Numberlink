@@ -134,10 +134,7 @@ def encode_oneSameNeighbor(board: Board, pos: int, num: int) -> set(str):
 
         for i_comb in combinations(range(n), k):
             for i, nebr in enumerate(neighbors):
-                if i in i_comb:
-                    clause.add(encode_Npi(nebr, num, True))
-                else:
-                    clause.add(encode_Npi(nebr, num, False))
+                clause.add(encode_Npi(nebr, num, i in i_comb))
 
     return clause
 
