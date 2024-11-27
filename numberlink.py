@@ -60,13 +60,13 @@ class Board:
     def from_input(filename):
         with open(filename) as file:
             board_size = Vector2.zero()
-            numbers = []
+            numbers = {}
 
             board_size.x, board_size.y = next(file).split()
 
             for line in file:
                 posx, posy, number = line.split()
-                numbers.append((Vector2(posx, posy), int(number)))
+                numbers[Vector2(posx, posy)] = int(number)
 
         return Board(board_size, numbers)
 
@@ -89,7 +89,7 @@ def encode_Npi(position, number, positive=True):
 def main(args):
     board = Board.from_input(args.input)
 
-    for pos, num in board.numbers:
+    for pos, num in board.numbers.items():
         print(encode_Npi(pos, num))
 
     pass
