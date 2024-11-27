@@ -28,11 +28,11 @@ class Vector2:
 
 
 class Board:
-    def __init__(self, size, numbers):
+    def __init__(self, size: Vector2, numbers: dict[Vector2, int]):
         self.size = size
         self.numbers = numbers
 
-    def neighbors(self, pos):
+    def neighbors(self, pos:Vector2) -> list[Vector2]:
         neighbors = []
 
         # Assure that pos is in bounds of the board
@@ -51,13 +51,21 @@ class Board:
         return neighbors
 
 
-    def positions(self):
+    def tiles(self):
         for x in range(self.size.x):
             for y in range(self.size.y):
                 yield Vector2(x, y)
 
+
+    def highest_number(self) -> int:
+        return max(self.numbers.values())
     
-    def from_input(filename):
+
+    def numbered_tiles(self):
+        return iter(self.numbers.keys())
+
+    
+    def from_input(filename: str):
         with open(filename) as file:
             board_size = Vector2.zero()
             numbers = {}
@@ -71,7 +79,7 @@ class Board:
         return Board(board_size, numbers)
 
 
-def encode_Npi(position, number, positive=True):
+def encode_Npi(position: Vector2, number: int, positive=True):
     vals = [str(position.x), str(position.y), str(number)]
 
     # Make sure that the code number never starts with 0
@@ -84,6 +92,28 @@ def encode_Npi(position, number, positive=True):
         code = "-" + code
 
     return code
+
+
+def encode_cnf(board: Board) -> set[set[str]]:
+    number_count = board.highest_number()
+    clauses = set()
+
+    empty_tiles = set(board.tiles()) - set(board.numbered_tiles())
+
+    for pos in board.tiles():
+        for i in range(number_count):
+            for j in range(number_count):
+                clauses.add(encode_onlyOneNum(pos, i, j))
+                
+    for pos in board.numbered_tiles():
+        for i in range(number_count):
+            clauses.add(encode_oneSameNeighbour(pos, i))
+
+    for pos in empty_tiles:
+        for i in range(number_count):
+            clauses.add(encode_twoSameNeihbors(pos, i))
+
+    return clauses
 
 
 def main(args):
