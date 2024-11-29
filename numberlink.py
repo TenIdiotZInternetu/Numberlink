@@ -1,5 +1,8 @@
 from argparse import ArgumentParser
 from itertools import combinations
+import subprocess
+
+GLUCOSE_PATH = "./glucose/simp/glucose"
 
 class Vector2:
     def __init__(self, x: int, y: int):
@@ -94,7 +97,7 @@ def encode_Npi(position: Vector2, number: int, positive=True) -> str:
     return code
 
 
-def encode_cnf(board: Board) -> frozenset[set[str]]:
+def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
     number_count = board.highest_number()
     clauses = set()
 
@@ -153,13 +156,31 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
     return frozenset(clauses)
 
 
+def cnf_to_file(cnf: frozenset[frozenset[str]], var_count:int, file_name: str):
+    with open(file_name, "w") as file:
+        file.write(f'p cnf {0} {1}'.format(str(var_count), str(len(cnf))))
+
+        for clause in cnf:
+            file.write(" ".join(clause))
+
+
+def run_glucose(cnf_file, verbosity):
+    return subprocess.run([GLUCOSE_PATH, '-model', '-verb=' + str(verbosity) , cnf_file], stdout=subprocess.PIPE)
+
+
 def main(args):
     board = Board.from_input(args.input)
     cnf = encode_cnf(board)
+    
+    var_count = board.size.x * board.size.y * board.highest_number()
+    cnf_file = cnf_to_file(cnf, var_count, args.output)
+    result = run_glucose(cnf_file, args.verbosity)
 
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-i", "--input", default="input.in", type=str, help="The instance file.")
+    parser.add_argument("-o", "--output", default="output.cnf", type=str, help="The file to write CNF into")
+    parser.add_argument("-v", "--verbosity", default=1, type=int, choices=range(0,2), help="Verbosity of the SAT solver used.")
 
     main(parser.parse_args())
