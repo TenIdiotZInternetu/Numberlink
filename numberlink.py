@@ -89,7 +89,7 @@ def encode_Npi(position: Vector2, number: int, positive=True) -> str:
     code = "1"
 
     for val in vals:
-        code += str(val).rjust(3, "0")
+        code += str(val).rjust(2, "0")
 
     if not positive:
         code = "-" + code
