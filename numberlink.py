@@ -105,7 +105,7 @@ def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
 
     # Initial tiles with numbers
     for pos, num in board.numbers.items():
-        clauses.add(encode_Npi(pos, num))
+        clauses.add(frozenset((encode_Npi(pos, num),)))
 
     # Only one number per tile
     for pos in board.tiles():
