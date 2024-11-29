@@ -158,10 +158,10 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
 
 def cnf_to_file(cnf: frozenset[frozenset[str]], var_count:int, file_name: str):
     with open(file_name, "w") as file:
-        file.write(f'p cnf {0} {1}'.format(str(var_count), str(len(cnf))))
+        file.write('p cnf {} {}\n'.format(str(var_count), str(len(cnf))))
 
         for clause in cnf:
-            file.write(" ".join(clause))
+            file.write(" ".join(clause) + "\n")
 
 
 def run_glucose(cnf_file, verbosity):
@@ -173,8 +173,9 @@ def main(args):
     cnf = encode_cnf(board)
     
     var_count = board.size.x * board.size.y * board.highest_number()
-    cnf_file = cnf_to_file(cnf, var_count, args.output)
-    result = run_glucose(cnf_file, args.verbosity)
+    cnf_to_file(cnf, var_count, args.output)
+    result = run_glucose(args.output, args.verbosity)
+    print(result)
 
 
 if __name__ == "__main__":
