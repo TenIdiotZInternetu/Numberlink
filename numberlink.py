@@ -100,16 +100,23 @@ def encode_cnf(board: Board) -> frozenset[set[str]]:
 
     empty_tiles = set(board.tiles()) - set(board.numbered_tiles())
 
+    # Initial tiles with numbers
+    for pos, num in board.numbers:
+        clauses.add(encode_Npi(pos, num))
+
+    # Only one number per tile
     for pos in board.tiles():
         for i in range(number_count):
             for j in range(number_count):
                 if i == j: continue
                 clauses.add(encode_onlyOneNum(pos, i, j))
                 
+    # Exactly one neighbor on numbered tiles
     for pos in board.numbered_tiles():
         for i in range(number_count):
             clauses |= encode_neighborCount(board, 1, pos, i)
 
+    # Exactly two neighbors on empty tiles
     for pos in empty_tiles:
         for i in range(number_count):
             clauses |= encode_neighborCount(board, 2, pos, i)
