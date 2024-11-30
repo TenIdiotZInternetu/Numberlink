@@ -231,6 +231,7 @@ def main(args):
     model = get_model(result)
 
     interpret_model(model, board.size, args.output)
+    
     if (args.append):
         append_glucose_output(result, args.output)
 

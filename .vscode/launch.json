@@ -35,11 +35,15 @@
             "type": "pickString",
             "description": "Select the input file",
             "options": [
-                "1by2-unsat",
                 "1by2",
-                "2by2-unsat",
+                "1by2-unsat",
                 "2by2",
-                "2by3"
+                "2by2-unsat",
+                "2by3",
+                "2by3-partial",
+                "4by4",
+                "7by7",
+                "7by7-dense"
             ]
         }
     ]
