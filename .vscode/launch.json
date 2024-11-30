@@ -14,6 +14,17 @@
                 "--input=./instances/${input:instance}.in",
                 "--output=./CNFs/${input:instance}.cnf"
             ]
+        },
+        {
+            "name": "CNF Test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/cnf_test.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-s=./correct_solutions/${input:instance}.sln",
+                "--cnf=./CNFs/${input:instance}.cnf"
+            ]
         }
     ],
     "inputs": [
