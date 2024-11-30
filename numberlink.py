@@ -55,10 +55,13 @@ class Board:
         return neighbors
 
 
-    def tiles(self):
+    def tiles(self) -> set:
+        tiles = set()
         for x in range(self.size.x):
             for y in range(self.size.y):
-                yield Vector2(x, y)
+                tiles.add(Vector2(x, y))
+
+        return tiles
 
 
     def highest_number(self) -> int:
@@ -67,6 +70,12 @@ class Board:
 
     def numbered_tiles(self):
         return iter(self.numbers.keys())
+    
+
+    def free_tiles(self):
+        for tile in self.tiles():
+            if tile in self.numbers.keys(): continue
+            yield tile
 
     
     def from_input(filename: str):
@@ -98,14 +107,12 @@ def encode_Npi(position: Vector2, number: int, positive=True) -> str:
 
 
 def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
-    number_count = board.highest_number()
+    number_count = board.highest_number() + 1       # 0 is also a number
     clauses = set()
-
-    empty_tiles = set(board.tiles()) - set(board.numbered_tiles())
 
     # Initial tiles with numbers
     for pos, num in board.numbers.items():
-        clauses.add(frozenset((encode_Npi(pos, num),)))
+        clauses.add(frozenset((encode_Npi(pos, num + 1),)))
 
     # Only one number per tile
     for pos in board.tiles():
@@ -120,7 +127,7 @@ def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
             clauses |= encode_neighborCount(board, 1, pos, i)
 
     # Exactly two neighbors on empty tiles
-    for pos in empty_tiles:
+    for pos in board.free_tiles():
         for i in range(number_count):
             clauses |= encode_neighborCount(board, 2, pos, i)
 
