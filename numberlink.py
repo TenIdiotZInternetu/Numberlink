@@ -183,7 +183,25 @@ def cnf_to_file(cnf: frozenset[frozenset[str]], var_count:int, file_name: str):
 def run_glucose(cnf_file, verbosity):
     return subprocess.run([GLUCOSE_PATH, '-model', '-verb=' + str(verbosity) , cnf_file], stdout=subprocess.PIPE)
 
-# def interpret_result()
+
+def get_model(result):
+    # check the returned result
+    if (result.returncode == 20):       # returncode for SAT is 10, for UNSAT is 20
+        print("Instance unsatisfiable")
+
+    # parse the model from the output of the solver
+    # the model starts with 'v'
+    model = []
+
+    for line in result.stdout.decode('utf-8').split('\n'):
+        if line.startswith("v"):                                    # there might be more lines of the model, each starting with 'v'
+            vars = line.split()[1:]                                 # remove leading v
+            model += list(filter(lambda x: x > 0, vars))            # we only care about numbers that are present
+
+    model = model.remove(0)                                         # 0 is the end of the model, just ignore it
+    return model
+
+
 
 def main(args):
     board = Board.from_input(args.input)
@@ -192,7 +210,7 @@ def main(args):
     var_count = board.size.x * board.size.y * board.highest_number()
     cnf_to_file(cnf, var_count, args.cnf)
     result = run_glucose(args.cnf, args.verbosity)
-    print(result)
+    get_model(result)
 
 
 if __name__ == "__main__":
