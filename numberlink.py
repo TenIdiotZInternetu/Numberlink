@@ -183,14 +183,15 @@ def cnf_to_file(cnf: frozenset[frozenset[str]], var_count:int, file_name: str):
 def run_glucose(cnf_file, verbosity):
     return subprocess.run([GLUCOSE_PATH, '-model', '-verb=' + str(verbosity) , cnf_file], stdout=subprocess.PIPE)
 
+# def interpret_result()
 
 def main(args):
     board = Board.from_input(args.input)
     cnf = encode_cnf(board)
     
     var_count = board.size.x * board.size.y * board.highest_number()
-    cnf_to_file(cnf, var_count, args.output)
-    result = run_glucose(args.output, args.verbosity)
+    cnf_to_file(cnf, var_count, args.cnf)
+    result = run_glucose(args.cnf, args.verbosity)
     print(result)
 
 
