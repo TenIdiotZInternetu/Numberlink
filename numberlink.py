@@ -29,6 +29,12 @@ class Vector2:
     
     def __repr__(self):
         return "<{}, {}>".format(self.x, self.y)
+    
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+    
+    def __hash__(self):
+        return hash((self.x, self.y))
 
 
 class Board:
@@ -73,8 +79,9 @@ class Board:
     
 
     def free_tiles(self):
+        aaaaa = list(self.numbers.keys())
         for tile in self.tiles():
-            if tile in self.numbers.keys(): continue
+            if tile in list(self.numbers.keys()): continue
             yield tile
 
     
