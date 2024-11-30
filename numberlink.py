@@ -196,11 +196,24 @@ def get_model(result):
     for line in result.stdout.decode('utf-8').split('\n'):
         if line.startswith("v"):                                    # there might be more lines of the model, each starting with 'v'
             vars = line.split()[1:]                                 # remove leading v
-            model += list(filter(lambda x: x > 0, vars))            # we only care about numbers that are present
+            model += list(filter(lambda x: int(x) > 0, vars))       # we only care about numbers that are present
 
-    model = model.remove(0)                                         # 0 is the end of the model, just ignore it
     return model
 
+
+def interpret_model(model, size, output_file):
+    table = [[" x" for _ in range(size.x)] for _ in range(size.y)]
+
+    for var in model:
+        col = int(var[1:3])
+        row = int(var[3:5])
+        num = var[5:]
+        
+        table[row][col] = num
+
+    with open(output_file, "w") as file:
+        for row in table:
+            file.write(" ".join(row) + "\n")
 
 
 def main(args):
@@ -210,7 +223,9 @@ def main(args):
     var_count = board.size.x * board.size.y * board.highest_number()
     cnf_to_file(cnf, var_count, args.cnf)
     result = run_glucose(args.cnf, args.verbosity)
-    get_model(result)
+    model = get_model(result)
+
+    interpret_model(model, board.size, args.output)
 
 
 if __name__ == "__main__":
