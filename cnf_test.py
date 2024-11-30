@@ -20,10 +20,13 @@ print("Problematic clauses:")
 with open(args.cnf) as cnf:
     for i, line in enumerate(cnf):
         if i == 0: continue
+        line_satisfied = False
 
         for var in line.split()[:-1]:
-            if var in Npis: break
-            if var[0] == "-" and var[1:] not in Npis: break
+            line_satisfied = (var in Npis or
+                              var[0] == "-" and var[1:] not in Npis)
+            
+            if line_satisfied: break
 
+        if not line_satisfied:
             print(f"Line {i}: {line[:-1]}")
-            break
