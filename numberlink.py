@@ -161,7 +161,8 @@ def cnf_to_file(cnf: frozenset[frozenset[str]], var_count:int, file_name: str):
         file.write('p cnf {} {}\n'.format(str(var_count), str(len(cnf))))
 
         for clause in cnf:
-            file.write(" ".join(clause) + "\n")
+            file.write(" ".join(clause))
+            file.write(" 0\n")
 
 
 def run_glucose(cnf_file, verbosity):
