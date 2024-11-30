@@ -22,7 +22,10 @@
             "type": "pickString",
             "description": "Select the input file",
             "options": [
+                "1by2-unsat",
                 "1by2",
+                "2by2-unsat",
+                "2by2",
                 "2by3"
             ]
         }
