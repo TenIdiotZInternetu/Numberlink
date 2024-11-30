@@ -5,13 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File",
+            "name": "Numberlink",
             "type": "debugpy",
             "request": "launch",
-            "program": "${file}",
+            "program": "${workspaceFolder}/numberlink.py",
             "console": "integratedTerminal",
             "args": [
-                "--input=./instances/2by3.in"
+                "--input=./instances/${input:instance}.in",
+                "--output=./CNFs/${input:instance}.cnf"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "id": "instance",
+            "type": "pickString",
+            "description": "Select the input file",
+            "options": [
+                "1by2",
+                "2by3"
             ]
         }
     ]
