@@ -12,7 +12,8 @@
             "console": "integratedTerminal",
             "args": [
                 "--input=./instances/${input:instance}.in",
-                "--output=./CNFs/${input:instance}.cnf"
+                "--cnf=./CNFs/${input:instance}.cnf",
+                "--output=./outputs/${input:instance}.out"
             ]
         },
         {

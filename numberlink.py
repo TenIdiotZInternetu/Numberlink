@@ -196,7 +196,8 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-i", "--input", default="input.in", type=str, help="The instance file.")
-    parser.add_argument("-o", "--output", default="output.cnf", type=str, help="The file to write CNF into")
+    parser.add_argument("--cnf", default="formula.cnf", type=str, help="TThe file to write CNF into")
+    parser.add_argument("-o", "--output", default="output.out", type=str, help="The output of the SAT solver")
     parser.add_argument("-v", "--verbosity", default=1, type=int, choices=range(0,2), help="Verbosity of the SAT solver used.")
 
     main(parser.parse_args())
