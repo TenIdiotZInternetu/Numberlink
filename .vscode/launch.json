@@ -14,7 +14,6 @@
                 "--input=./instances/${input:instance}.in",
                 "--cnf=./CNFs/${input:instance}.cnf",
                 "--output=./outputs/${input:instance}.out",
-                "-a"
             ]
         },
         {
@@ -43,7 +42,8 @@
                 "2by3-partial",
                 "4by4",
                 "7by7",
-                "7by7-dense"
+                "7by7-dense",
+                "15by15"
             ]
         }
     ]

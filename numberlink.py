@@ -113,13 +113,18 @@ def encode_Npi(position: Vector2, number: int, positive=True) -> str:
     return code
 
 
-def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
+def encode_cnf(board: Board, full: bool) -> frozenset[frozenset[str]]:
     number_count = board.highest_number() + 1       # 0 is also a number
     clauses = set()
 
     # Initial tiles with numbers
     for pos, num in board.numbers.items():
         clauses.add(frozenset((encode_Npi(pos, num),)))
+
+    # All tiles must have a number
+    if full:
+        for pos in board.tiles():
+            clauses.add(encode_atLeastOneNum(pos, number_count))
 
     # Only one number per tile
     for pos in board.tiles():
@@ -139,6 +144,14 @@ def encode_cnf(board: Board) -> frozenset[frozenset[str]]:
             clauses |= encode_neighborCount(board, 2, pos, i)
 
     return frozenset(clauses)
+
+
+def encode_atLeastOneNum(pos, num_count):
+    clause = set()
+    for i in range(num_count):
+        clause.add(encode_Npi(pos, i))
+
+    return frozenset(clause)
 
 
 def encode_onlyOneNum(pos: Vector2, i: int, j: int) -> frozenset[str]:
@@ -184,10 +197,11 @@ def run_glucose(cnf_file, verbosity):
     return subprocess.run([GLUCOSE_PATH, '-model', '-verb=' + str(verbosity) , cnf_file], stdout=subprocess.PIPE)
 
 
-def get_model(result):
+def get_model(result) -> list[str]:
     # check the returned result
     if (result.returncode == 20):       # returncode for SAT is 10, for UNSAT is 20
         print("Instance unsatisfiable")
+        return []
 
     # parse the model from the output of the solver
     # the model starts with 'v'
@@ -198,10 +212,16 @@ def get_model(result):
             vars = line.split()[1:]                                 # remove leading v
             model += list(filter(lambda x: int(x) > 0, vars))       # we only care about numbers that are present
 
+    print("Model Found")
     return model
 
 
-def interpret_model(model, size, output_file):
+def interpret_model(model: list[str], size: Vector2, output_file: str):
+    if len(model) == 0:
+        with open(output_file, "w") as file:
+            file.write("Instance unsatisfiable")
+            return
+
     table = [[" x" for _ in range(size.x)] for _ in range(size.y)]
 
     for var in model:
@@ -223,7 +243,7 @@ def append_glucose_output(result, output_file):
 
 def main(args):
     board = Board.from_input(args.input)
-    cnf = encode_cnf(board)
+    cnf = encode_cnf(board, args.full)
     
     var_count = board.size.x * board.size.y * board.highest_number()
     cnf_to_file(cnf, var_count, args.cnf)
@@ -231,7 +251,7 @@ def main(args):
     model = get_model(result)
 
     interpret_model(model, board.size, args.output)
-    
+
     if (args.append):
         append_glucose_output(result, args.output)
 
@@ -239,10 +259,11 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-i", "--input", default="input.in", type=str, help="The instance file.")
+    parser.add_argument("-i", "--input", default="input.in", type=str, help="The instance file")
     parser.add_argument("--cnf", default="formula.cnf", type=str, help="TThe file to write CNF into")
     parser.add_argument("-o", "--output", default="output.out", type=str, help="The output of the SAT solver")
-    parser.add_argument("-v", "--verbosity", default=1, type=int, choices=range(0,2), help="Verbosity of the SAT solver used.")
+    parser.add_argument("-f", "--full", default=False, action="store_true", help="Whether all tiles on board should be used")
+    parser.add_argument("-v", "--verbosity", default=1, type=int, choices=range(0,2), help="Verbosity of the SAT solver used")
     parser.add_argument("-a", "--append", default=False, action="store_true", help="Appends output of glucose to the output file")
 
     main(parser.parse_args())
