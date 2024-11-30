@@ -13,7 +13,8 @@
             "args": [
                 "--input=./instances/${input:instance}.in",
                 "--cnf=./CNFs/${input:instance}.cnf",
-                "--output=./outputs/${input:instance}.out"
+                "--output=./outputs/${input:instance}.out",
+                "-a"
             ]
         },
         {

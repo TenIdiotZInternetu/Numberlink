@@ -216,6 +216,11 @@ def interpret_model(model, size, output_file):
             file.write(" ".join(row) + "\n")
 
 
+def append_glucose_output(result, output_file):
+    with open(output_file, "a") as file:
+        file.write(result.stdout.decode('utf-8'))
+
+
 def main(args):
     board = Board.from_input(args.input)
     cnf = encode_cnf(board)
@@ -226,6 +231,9 @@ def main(args):
     model = get_model(result)
 
     interpret_model(model, board.size, args.output)
+    if (args.append):
+        append_glucose_output(result, args.output)
+
 
 
 if __name__ == "__main__":
@@ -234,5 +242,6 @@ if __name__ == "__main__":
     parser.add_argument("--cnf", default="formula.cnf", type=str, help="TThe file to write CNF into")
     parser.add_argument("-o", "--output", default="output.out", type=str, help="The output of the SAT solver")
     parser.add_argument("-v", "--verbosity", default=1, type=int, choices=range(0,2), help="Verbosity of the SAT solver used.")
+    parser.add_argument("-a", "--append", default=False, action="store_true", help="Appends output of glucose to the output file")
 
     main(parser.parse_args())
