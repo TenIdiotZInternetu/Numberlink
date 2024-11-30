@@ -161,6 +161,7 @@ def encode_neighborCount(board: Board, count: int, pos: int, num: int) -> frozen
 
         for i_comb in combinations(range(n), k):
             clause = set()
+            clause.add(encode_Npi(pos, num, False))
 
             for i, nebr in enumerate(neighbors):
                 clause.add(encode_Npi(nebr, num, i not in i_comb))
